@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tape Deck — audio to transcript, in your browser</title>
+<meta name="description" content="Drop an MP3 and get a timecoded transcript. Runs entirely in your browser — no upload, no server, no API key.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#131A16;
+    --ink-60:rgba(19,26,22,.6);
+    --ink-30:rgba(19,26,22,.28);
+    --ink-12:rgba(19,26,22,.12);
+    --paper:#E8EAE3;
+    --paper-2:#DDE0D6;
+    --blue:#2743E3;
+    --moss:#6F7F68;
+    --signal:#EDE500;
+    --red:#C4361B;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:"IBM Plex Sans",system-ui,sans-serif;
+    --display:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 80px}
+
+  /* ---------- header ---------- */
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-60);display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  }
+  .eyebrow b{font-weight:500;color:var(--ink);background:var(--signal);padding:2px 6px}
+  h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(38px,8vw,76px);
+    line-height:.95;
+    letter-spacing:-.03em;
+    margin:14px 0 0;
+    max-width:14ch;
+  }
+  h1 em{font-style:normal;color:var(--blue)}
+  .lede{max-width:52ch;margin:16px 0 0;color:var(--ink-60);font-size:15px}
+  hr.rule{border:0;border-top:1px solid var(--ink-12);margin:26px 0}
+
+  /* ---------- drop zone ---------- */
+  .deck{
+    border:1px solid var(--ink);
+    background:var(--paper-2);
+    display:grid;grid-template-columns:1fr 300px;
+  }
+  @media(max-width:760px){.deck{grid-template-columns:1fr}}
+  .drop{
+    padding:26px;min-height:168px;display:flex;flex-direction:column;justify-content:center;gap:10px;
+    cursor:pointer;transition:background .15s ease;
+  }
+  .drop:hover,.drop:focus-visible{background:#E3E6DB;outline:none}
+  .drop.over{background:var(--signal)}
+  .drop-title{font-family:var(--display);font-weight:600;font-size:24px;letter-spacing:-.01em}
+  .drop-sub{font-family:var(--mono);font-size:12px;color:var(--ink-60)}
+  .filename{font-family:var(--mono);font-size:13px;word-break:break-all}
+  .filemeta{font-family:var(--mono);font-size:12px;color:var(--ink-60)}
+
+  .controls{border-left:1px solid var(--ink);padding:20px;display:flex;flex-direction:column;gap:14px}
+  @media(max-width:760px){.controls{border-left:0;border-top:1px solid var(--ink)}}
+  label.field{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);margin-bottom:5px}
+  select{
+    width:100%;font-family:var(--mono);font-size:13px;padding:8px 9px;color:var(--ink);
+    background:var(--paper);border:1px solid var(--ink-30);border-radius:0;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+    background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  select:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+
+  button{font-family:var(--mono);font-size:13px;border-radius:0;cursor:pointer}
+  button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .go{
+    margin-top:auto;background:var(--blue);color:#fff;border:1px solid var(--blue);
+    padding:12px 14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    transition:transform .12s ease;
+  }
+  .go:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+  .go:disabled{background:var(--ink-12);border-color:transparent;color:var(--ink-30);cursor:not-allowed}
+
+  /* ---------- waveform ---------- */
+  .tape{margin-top:18px;border:1px solid var(--ink);border-top:0;background:var(--paper-2);display:none}
+  .tape.on{display:block}
+  .tape-head{display:flex;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px solid var(--ink-12)}
+  .play{
+    width:38px;height:38px;flex:0 0 38px;border:1px solid var(--ink);background:var(--paper);
+    display:grid;place-items:center;font-size:12px;line-height:1;
+  }
+  .play:hover{background:var(--signal)}
+  .clock{font-family:var(--mono);font-size:12px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+  canvas{display:block;width:100%;height:96px;cursor:crosshair}
+
+  /* ---------- status ---------- */
+  .status{margin-top:18px;border:1px solid var(--ink-12);background:var(--paper-2);padding:14px;display:none}
+  .status.on{display:block}
+  .status-row{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px}
+  .status-row .msg{color:var(--ink)}
+  .status-row .pct{color:var(--ink-60);font-variant-numeric:tabular-nums}
+  .bar{height:4px;background:var(--ink-12);margin-top:9px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .25s ease}
+  .bar.indet i{width:40%;animation:slide 1.3s ease-in-out infinite}
+  @keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+  .status.err{border-color:var(--red)}
+  .status.err .msg{color:var(--red)}
+
+  /* ---------- transcript ---------- */
+  .out{margin-top:34px;display:none}
+  .out.on{display:block}
+  .out-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+  h2{font-family:var(--display);font-weight:600;font-size:26px;letter-spacing:-.01em;margin:0}
+  .exports{display:flex;gap:6px;flex-wrap:wrap}
+  .exports button{background:transparent;border:1px solid var(--ink-30);padding:6px 10px;color:var(--ink)}
+  .exports button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .lines{border-top:1px solid var(--ink)}
+  .line{
+    display:grid;grid-template-columns:86px 1fr;gap:16px;
+    padding:9px 4px;border-bottom:1px solid var(--ink-12);
+    background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;
+    font-family:var(--mono);font-size:14.5px;line-height:1.65;color:var(--ink);
+  }
+  .line:hover{background:var(--paper-2)}
+  .line .tc{color:var(--moss);font-size:12px;font-variant-numeric:tabular-nums;padding-top:3px}
+  .line.now{background:var(--signal)}
+  .line.now .tc{color:var(--ink)}
+  .plain{white-space:pre-wrap;font-family:var(--mono);font-size:14.5px;line-height:1.8;border-top:1px solid var(--ink);padding-top:16px}
+  .foot{margin-top:52px;font-family:var(--mono);font-size:12px;color:var(--ink-60);max-width:62ch}
+  .foot a{color:var(--blue)}
+  .vis-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow"><b>Nothing leaves this device</b> <span>Whisper runs locally · no key · no upload</span></p>
+    <h1>Drop a tape.<br>Get the <em>words</em>.</h1>
+    <p class="lede">Pick an audio file and it gets transcribed right here in the browser tab. The first run downloads the speech model (about 80&nbsp;MB for the default), then it's cached for next time.</p>
+  </header>
+
+  <hr class="rule">
+
+  <div class="deck">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose an audio file">
+      <div class="drop-title" id="dropTitle">Choose an audio file</div>
+      <div class="drop-sub" id="dropSub">or drag one here — mp3, wav, m4a, ogg, webm, flac</div>
+    </div>
+    <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm,.flac" class="vis-hidden">
+
+    <div class="controls">
+      <div>
+        <label class="field" for="model">Model</label>
+        <select id="model"></select>
+      </div>
+      <div>
+        <label class="field" for="lang">Language</label>
+        <select id="lang"></select>
+      </div>
+      <button class="go" id="go" disabled>Transcribe</button>
+    </div>
+  </div>
+
+  <div class="tape" id="tape">
+    <div class="tape-head">
+      <button class="play" id="play" aria-label="Play">▶</button>
+      <span class="clock" id="clock">0:00 / 0:00</span>
+    </div>
+    <canvas id="wave" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="status" id="status" role="status" aria-live="polite">
+    <div class="status-row"><span class="msg" id="statusMsg">Ready</span><span class="pct" id="statusPct"></span></div>
+    <div class="bar" id="bar"><i id="barFill"></i></div>
+  </div>
+
+  <section class="out" id="out">
+    <div class="out-head">
+      <h2>Transcript</h2>
+      <div class="exports">
+        <button data-view="timed">Timecoded</button>
+        <button data-view="plain">Plain text</button>
+        <button data-dl="txt">.txt</button>
+        <button data-dl="srt">.srt</button>
+        <button data-dl="vtt">.vtt</button>
+        <button data-dl="json">.json</button>
+        <button id="copy">Copy</button>
+      </div>
+    </div>
+    <div class="lines" id="lines"></div>
+    <div class="plain" id="plainOut" hidden></div>
+  </section>
+
+  <p class="foot">
+    Built on <a href="https://github.com/huggingface/transformers.js">Transformers.js</a> running OpenAI's Whisper models with ONNX Runtime Web.
+    Accuracy tracks model size — bump up a tier if names and jargon come out wrong. Long files take a while on CPU;
+    a browser with WebGPU (Chrome or Edge) is several times faster.
+  </p>
+
+  <audio id="audio" class="vis-hidden"></audio>
+</div>
+
+<!-- Worker source. Kept as a non-executing script tag, then booted as a module worker. -->
+<script id="workerSrc" type="text/js-worker">
+import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3";
+
+env.allowLocalModels = false;
+
+let pipe = null;
+let loadedKey = "";
+
+async function build(model, device, dtype) {
+  const key = model + "|" + device;
+  if (pipe && loadedKey === key) return pipe;
+  if (pipe) { try { await pipe.dispose(); } catch (e) {} pipe = null; loadedKey = ""; }
+  pipe = await pipeline("automatic-speech-recognition", model, {
+    device,
+    dtype,
+    progress_callback: (p) => self.postMessage({ type: "progress", data: p })
+  });
+  loadedKey = key;
+  return pipe;
+}
+
+self.onmessage = async (e) => {
+  const { audio, model, dtype, dtypeCpu, language, duration } = e.data;
+  try {
+    let p;
+    self.postMessage({ type: "status", data: "Loading model" });
+    try {
+      p = await build(model, "webgpu", dtype);
+    } catch (err) {
+      self.postMessage({ type: "status", data: "WebGPU unavailable — using CPU" });
+      p = await build(model, "wasm", dtypeCpu);
+    }
+
+    const hop = 20;
+    const total = Math.max(1, Math.ceil((duration || 0) / hop));
+    let done = 0;
+    self.postMessage({ type: "status", data: "Transcribing" });
+
+    const opts = {
+      chunk_length_s: 30,
+      stride_length_s: 5,
+      return_timestamps: true,
+      chunk_callback: () => {
+        done++;
+        self.postMessage({ type: "chunk", data: Math.min(0.99, done / total) });
+      }
+    };
+    if (language) { opts.language = language; opts.task = "transcribe"; }
+
+    const result = await p(audio, opts);
+    self.postMessage({ type: "done", data: result });
+  } catch (err) {
+    self.postMessage({ type: "error", data: String((err && err.message) || err) });
+  }
+};
+</script>
+
+<script>
+(() => {
+  "use strict";
+
+  const MODELS = [
+    { id: "Xenova/whisper-base.en",  label: "Base · English (~80 MB) — default",   multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
+    { id: "Xenova/whisper-tiny.en",  label: "Tiny · English (~40 MB) — fastest",   multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
+    { id: "Xenova/whisper-small.en", label: "Small · English (~250 MB) — better",  multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
+    { id: "Xenova/whisper-base",     label: "Base · multilingual (~80 MB)",        multi: true,  dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
+    { id: "Xenova/whisper-small",    label: "Small · multilingual (~250 MB)",      multi: true,  dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" }
+  ];
+
+  const LANGS = ["english","spanish","french","german","italian","portuguese","dutch","russian","polish","turkish","arabic","hindi","japanese","korean","chinese","vietnamese","indonesian","swedish","danish","norwegian","finnish","czech","greek","hebrew","romanian","ukrainian","thai","tagalog"];
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    drop: $("drop"), dropTitle: $("dropTitle"), dropSub: $("dropSub"), file: $("file"),
+    model: $("model"), lang: $("lang"), go: $("go"),
+    tape: $("tape"), play: $("play"), clock: $("clock"), wave: $("wave"),
+    status: $("status"), statusMsg: $("statusMsg"), statusPct: $("statusPct"), bar: $("bar"), barFill: $("barFill"),
+    out: $("out"), lines: $("lines"), plainOut: $("plainOut"), copy: $("copy"), audio: $("audio")
+  };
+
+  let worker = null;
+  let peaks = null;         // Float32Array of drawing peaks
+  let pcm = null;           // 16 kHz mono samples for the model
+  let duration = 0;
+  let segments = [];
+  let objectUrl = null;
+  let view = "timed";
+  let running = false;
+
+  /* ---------- setup selects ---------- */
+  MODELS.forEach((m, i) => els.model.add(new Option(m.label, String(i))));
+  els.lang.add(new Option("Auto-detect", ""));
+  LANGS.forEach((l) => els.lang.add(new Option(l[0].toUpperCase() + l.slice(1), l)));
+  const syncLang = () => {
+    const m = MODELS[+els.model.value];
+    els.lang.disabled = !m.multi;
+    els.lang.title = m.multi ? "" : "English-only model";
+    if (!m.multi) els.lang.value = "";
+  };
+  els.model.addEventListener("change", syncLang);
+  syncLang();
+
+  /* ---------- helpers ---------- */
+  const pad = (n, w = 2) => String(Math.floor(n)).padStart(w, "0");
+  function clock(t) {
+    t = Math.max(0, t || 0);
+    const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = Math.floor(t) % 60;
+    return (h ? h + ":" + pad(m) : m) + ":" + pad(s);
+  }
+  function stamp(t, comma) {
+    t = Math.max(0, t || 0);
+    const ms = Math.round((t % 1) * 1000);
+    return pad(t / 3600) + ":" + pad(Math.floor(t / 60) % 60) + ":" + pad(t % 60) + (comma ? "," : ".") + pad(ms, 3);
+  }
+  function setStatus(msg, pct, isErr) {
+    els.status.classList.add("on");
+    els.status.classList.toggle("err", !!isErr);
+    els.statusMsg.textContent = msg;
+    if (pct == null) {
+      els.bar.classList.add("indet");
+      els.barFill.style.width = "";
+      els.statusPct.textContent = "";
+    } else {
+      els.bar.classList.remove("indet");
+      els.barFill.style.width = Math.round(pct * 100) + "%";
+      els.statusPct.textContent = Math.round(pct * 100) + "%";
+    }
+  }
+
+  /* ---------- file intake ---------- */
+  els.drop.addEventListener("click", () => els.file.click());
+  els.drop.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); els.file.click(); }
+  });
+  ["dragenter", "dragover"].forEach((ev) =>
+    els.drop.addEventListener(ev, (e) => { e.preventDefault(); els.drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) =>
+    els.drop.addEventListener(ev, () => els.drop.classList.remove("over")));
+  els.drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) load(f);
+  });
+  els.file.addEventListener("change", () => {
+    if (els.file.files[0]) load(els.file.files[0]);
+  });
+
+  async function load(file) {
+    els.go.disabled = true;
+    els.out.classList.remove("on");
+    segments = [];
+    setStatus("Reading " + file.name, null);
+    try {
+      const buf = await file.arrayBuffer();
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      let audioBuffer;
+      try {
+        const ctx = new Ctx({ sampleRate: 16000 });
+        audioBuffer = await ctx.decodeAudioData(buf.slice(0));
+        ctx.close();
+      } catch (e) {
+        const ctx = new Ctx();
+        audioBuffer = await ctx.decodeAudioData(buf.slice(0));
+        ctx.close();
+      }
+
+      // Mix to mono
+      let mono;
+      if (audioBuffer.numberOfChannels > 1) {
+        const a = audioBuffer.getChannelData(0), b = audioBuffer.getChannelData(1);
+        mono = new Float32Array(a.length);
+        for (let i = 0; i < a.length; i++) mono[i] = (a[i] + b[i]) / 2;
+      } else {
+        mono = audioBuffer.getChannelData(0).slice();
+      }
+
+      // Resample to 16 kHz if the browser ignored the sampleRate hint
+      if (Math.abs(audioBuffer.sampleRate - 16000) > 1) {
+        const off = new OfflineAudioContext(1, Math.ceil(mono.length * 16000 / audioBuffer.sampleRate), 16000);
+        const src = off.createBufferSource();
+        const tmp = off.createBuffer(1, mono.length, audioBuffer.sampleRate);
+        tmp.copyToChannel(mono, 0);
+        src.buffer = tmp;
+        src.connect(off.destination);
+        src.start();
+        mono = (await off.startRendering()).getChannelData(0).slice();
+      }
+
+      pcm = mono;
+      duration = mono.length / 16000;
+
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      objectUrl = URL.createObjectURL(file);
+      els.audio.src = objectUrl;
+
+      els.dropTitle.textContent = file.name;
+      els.dropTitle.className = "filename drop-title";
+      els.dropSub.textContent = clock(duration) + " · " + (file.size / 1048576).toFixed(1) + " MB · click to swap";
+      els.tape.classList.add("on");
+      buildPeaks();
+      drawWave(0);
+      els.clock.textContent = "0:00 / " + clock(duration);
+      els.go.disabled = false;
+      setStatus("Ready — " + clock(duration) + " of audio", 1);
+    } catch (err) {
+      setStatus("Couldn't decode that file. Try MP3, WAV, M4A, OGG or FLAC.", 1, true);
+    }
+  }
+
+  /* ---------- waveform ---------- */
+  function buildPeaks() {
+    const n = 900;
+    peaks = new Float32Array(n);
+    const step = Math.max(1, Math.floor(pcm.length / n));
+    for (let i = 0; i < n; i++) {
+      let max = 0;
+      const start = i * step, end = Math.min(pcm.length, start + step);
+      for (let j = start; j < end; j += 4) { const v = Math.abs(pcm[j]); if (v > max) max = v; }
+      peaks[i] = max;
+    }
+    const top = Math.max(0.01, Math.max.apply(null, Array.from(peaks)));
+    for (let i = 0; i < n; i++) peaks[i] = Math.min(1, peaks[i] / top);
+  }
+
+  function drawWave(playhead) {
+    if (!peaks) return;
+    const c = els.wave, dpr = window.devicePixelRatio || 1;
+    const w = c.clientWidth, h = c.clientHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    const g = c.getContext("2d");
+    g.scale(dpr, dpr);
+    g.clearRect(0, 0, w, h);
+
+    const barW = 2, gap = 1, count = Math.floor(w / (barW + gap));
+    const mid = h / 2, playX = (playhead / (duration || 1)) * w;
+    for (let i = 0; i < count; i++) {
+      const p = peaks[Math.floor(i / count * peaks.length)] || 0;
+      const bh = Math.max(1.5, p * (h - 14));
+      const x = i * (barW + gap);
+      g.fillStyle = x <= playX ? "#131A16" : "rgba(111,127,104,.55)";
+      g.fillRect(x, mid - bh / 2, barW, bh);
+    }
+    if (playhead > 0) {
+      g.fillStyle = "#2743E3";
+      g.fillRect(playX, 0, 1.5, h);
+    }
+  }
+  window.addEventListener("resize", () => drawWave(els.audio.currentTime));
+
+  els.wave.addEventListener("click", (e) => {
+    const r = els.wave.getBoundingClientRect();
+    els.audio.currentTime = ((e.clientX - r.left) / r.width) * duration;
+  });
+
+  /* ---------- playback ---------- */
+  els.play.addEventListener("click", () => {
+    if (els.audio.paused) els.audio.play(); else els.audio.pause();
+  });
+  els.audio.addEventListener("play", () => { els.play.textContent = "❚❚"; tick(); });
+  els.audio.addEventListener("pause", () => { els.play.textContent = "▶"; });
+  els.audio.addEventListener("ended", () => { els.play.textContent = "▶"; });
+
+  function tick() {
+    const t = els.audio.currentTime;
+    drawWave(t);
+    els.clock.textContent = clock(t) + " / " + clock(duration);
+    let active = -1;
+    for (let i = 0; i < segments.length; i++) {
+      if (t >= segments[i].start && t < segments[i].end) { active = i; break; }
+    }
+    Array.prototype.forEach.call(els.lines.children, (el, i) => el.classList.toggle("now", i === active));
+    if (!els.audio.paused) requestAnimationFrame(tick);
+  }
+  els.audio.addEventListener("seeked", () => { if (els.audio.paused) tick(); });
+
+  /* ---------- transcription ---------- */
+  function boot() {
+    if (worker) return worker;
+    const src = document.getElementById("workerSrc").textContent;
+    const url = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
+    worker = new Worker(url, { type: "module" });
+    worker.onmessage = (e) => {
+      const { type, data } = e.data;
+      if (type === "progress") {
+        if (data.status === "progress" && data.file && /\.onnx/.test(data.file)) {
+          setStatus("Downloading model · " + data.file.split("/").pop(), (data.progress || 0) / 100);
+        } else if (data.status === "initiate") {
+          setStatus("Fetching " + (data.file || "model files"), null);
+        }
+      } else if (type === "status") {
+        setStatus(data + "…", null);
+      } else if (type === "chunk") {
+        setStatus("Transcribing", data);
+      } else if (type === "done") {
+        finish(data);
+      } else if (type === "error") {
+        running = false;
+        els.go.disabled = false;
+        els.go.textContent = "Transcribe";
+        setStatus(data, 1, true);
+      }
+    };
+    worker.onerror = () => {
+      running = false;
+      els.go.disabled = false;
+      setStatus("The worker failed to start. Serve this page over http(s), not from a file:// path.", 1, true);
+    };
+    return worker;
+  }
+
+  els.go.addEventListener("click", () => {
+    if (running || !pcm) return;
+    running = true;
+    els.go.disabled = true;
+    els.go.textContent = "Working…";
+    els.out.classList.remove("on");
+    setStatus("Starting", null);
+    const m = MODELS[+els.model.value];
+    boot().postMessage({
+      audio: pcm,
+      model: m.id,
+      dtype: m.dtype,
+      dtypeCpu: m.cpu,
+      language: m.multi ? (els.lang.value || null) : null,
+      duration
+    });
+  });
+
+  function finish(result) {
+    running = false;
+    els.go.disabled = false;
+    els.go.textContent = "Transcribe";
+
+    const chunks = (result && result.chunks) || [];
+    segments = chunks.map((c, i) => {
+      const start = (c.timestamp && c.timestamp[0]) || 0;
+      let end = c.timestamp && c.timestamp[1];
+      if (end == null) {
+        const next = chunks[i + 1];
+        end = (next && next.timestamp && next.timestamp[0]) || duration;
+      }
+      return { start, end, text: (c.text || "").trim() };
+    }).filter((s) => s.text);
+
+    if (!segments.length && result && result.text) {
+      segments = [{ start: 0, end: duration, text: result.text.trim() }];
+    }
+
+    render();
+    setStatus("Done — " + segments.length + " segments, " +
+      segments.reduce((n, s) => n + s.text.split(/\s+/).length, 0) + " words", 1);
+  }
+
+  function render() {
+    els.lines.innerHTML = "";
+    segments.forEach((s) => {
+      const b = document.createElement("button");
+      b.className = "line";
+      b.innerHTML = '<span class="tc"></span><span class="tx"></span>';
+      b.querySelector(".tc").textContent = clock(s.start);
+      b.querySelector(".tx").textContent = s.text;
+      b.addEventListener("click", () => { els.audio.currentTime = s.start; els.audio.play(); });
+      els.lines.appendChild(b);
+    });
+    els.plainOut.textContent = paragraphs();
+    els.out.classList.add("on");
+    setView(view);
+  }
+
+  function paragraphs() {
+    let out = "", gap = 0;
+    segments.forEach((s, i) => {
+      const prev = segments[i - 1];
+      if (prev && s.start - prev.end > 1.6) gap = 1;
+      out += (i === 0 ? "" : gap ? "\n\n" : " ") + s.text;
+      gap = 0;
+    });
+    return out;
+  }
+
+  function setView(v) {
+    view = v;
+    els.lines.hidden = v !== "timed";
+    els.plainOut.hidden = v !== "plain";
+  }
+
+  /* ---------- exports ---------- */
+  function asSRT() {
+    return segments.map((s, i) =>
+      (i + 1) + "\n" + stamp(s.start, true) + " --> " + stamp(s.end, true) + "\n" + s.text + "\n").join("\n");
+  }
+  function asVTT() {
+    return "WEBVTT\n\n" + segments.map((s) =>
+      stamp(s.start, false) + " --> " + stamp(s.end, false) + "\n" + s.text + "\n").join("\n");
+  }
+  function download(name, text) {
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+    a.href = url; a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  document.querySelector(".exports").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn || !segments.length) return;
+    if (btn.dataset.view) return setView(btn.dataset.view);
+    const base = (els.dropTitle.textContent || "transcript").replace(/\.[^.]+$/, "");
+    const kind = btn.dataset.dl;
+    if (kind === "txt") download(base + ".txt", paragraphs());
+    if (kind === "srt") download(base + ".srt", asSRT());
+    if (kind === "vtt") download(base + ".vtt", asVTT());
+    if (kind === "json") download(base + ".json", JSON.stringify(segments, null, 2));
+  });
+
+  els.copy.addEventListener("click", async () => {
+    if (!segments.length) return;
+    const text = view === "plain" ? paragraphs()
+      : segments.map((s) => "[" + clock(s.start) + "] " + s.text).join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      els.copy.textContent = "Copied";
+      setTimeout(() => (els.copy.textContent = "Copy"), 1400);
+    } catch (e) {
+      els.copy.textContent = "Copy blocked";
+      setTimeout(() => (els.copy.textContent = "Copy"), 1400);
+    }
+  });
+})();
+</script>
+</body>
+</html>
