@@ -26,101 +26,61 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:var(--sans);
-    font-size:16px;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 80px}
 
-  /* ---------- header ---------- */
-  .eyebrow{
-    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--ink-60);display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-  }
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-60);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .eyebrow b{font-weight:500;color:var(--ink);background:var(--signal);padding:2px 6px}
-  h1{
-    font-family:var(--display);
-    font-weight:800;
-    font-size:clamp(38px,8vw,76px);
-    line-height:.95;
-    letter-spacing:-.03em;
-    margin:14px 0 0;
-    max-width:14ch;
-  }
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(38px,8vw,76px);line-height:.95;letter-spacing:-.03em;margin:14px 0 0;max-width:14ch}
   h1 em{font-style:normal;color:var(--blue)}
-  .lede{max-width:52ch;margin:16px 0 0;color:var(--ink-60);font-size:15px}
+  .lede{max-width:54ch;margin:16px 0 0;color:var(--ink-60);font-size:15px}
   hr.rule{border:0;border-top:1px solid var(--ink-12);margin:26px 0}
 
-  /* ---------- drop zone ---------- */
-  .deck{
-    border:1px solid var(--ink);
-    background:var(--paper-2);
-    display:grid;grid-template-columns:1fr 300px;
-  }
-  @media(max-width:760px){.deck{grid-template-columns:1fr}}
-  .drop{
-    padding:26px;min-height:168px;display:flex;flex-direction:column;justify-content:center;gap:10px;
-    cursor:pointer;transition:background .15s ease;
-  }
+  .deck{border:1px solid var(--ink);background:var(--paper-2);display:grid;grid-template-columns:1fr 320px}
+  @media(max-width:820px){.deck{grid-template-columns:1fr}}
+  .drop{padding:26px;min-height:186px;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer;transition:background .15s ease}
   .drop:hover,.drop:focus-visible{background:#E3E6DB;outline:none}
   .drop.over{background:var(--signal)}
-  .drop-title{font-family:var(--display);font-weight:600;font-size:24px;letter-spacing:-.01em}
+  .drop-title{font-family:var(--display);font-weight:600;font-size:24px;letter-spacing:-.01em;word-break:break-all}
   .drop-sub{font-family:var(--mono);font-size:12px;color:var(--ink-60)}
-  .filename{font-family:var(--mono);font-size:13px;word-break:break-all}
-  .filemeta{font-family:var(--mono);font-size:12px;color:var(--ink-60)}
 
-  .controls{border-left:1px solid var(--ink);padding:20px;display:flex;flex-direction:column;gap:14px}
-  @media(max-width:760px){.controls{border-left:0;border-top:1px solid var(--ink)}}
+  .controls{border-left:1px solid var(--ink);padding:20px;display:flex;flex-direction:column;gap:13px}
+  @media(max-width:820px){.controls{border-left:0;border-top:1px solid var(--ink)}}
   label.field{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);margin-bottom:5px}
-  select{
-    width:100%;font-family:var(--mono);font-size:13px;padding:8px 9px;color:var(--ink);
-    background:var(--paper);border:1px solid var(--ink-30);border-radius:0;appearance:none;
+  select{width:100%;font-family:var(--mono);font-size:13px;padding:8px 9px;color:var(--ink);background:var(--paper);border:1px solid var(--ink-30);border-radius:0;appearance:none;
     background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);
-    background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;
-    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
-  }
+    background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
   select:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+  select:disabled{opacity:.45}
 
   button{font-family:var(--mono);font-size:13px;border-radius:0;cursor:pointer}
   button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-  .go{
-    margin-top:auto;background:var(--blue);color:#fff;border:1px solid var(--blue);
-    padding:12px 14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
-    transition:transform .12s ease;
-  }
+  .go{margin-top:auto;background:var(--blue);color:#fff;border:1px solid var(--blue);padding:12px 14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;transition:transform .12s ease}
   .go:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
   .go:disabled{background:var(--ink-12);border-color:transparent;color:var(--ink-30);cursor:not-allowed}
+  .go.stop{background:var(--red);border-color:var(--red)}
 
-  /* ---------- waveform ---------- */
   .tape{margin-top:18px;border:1px solid var(--ink);border-top:0;background:var(--paper-2);display:none}
   .tape.on{display:block}
   .tape-head{display:flex;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px solid var(--ink-12)}
-  .play{
-    width:38px;height:38px;flex:0 0 38px;border:1px solid var(--ink);background:var(--paper);
-    display:grid;place-items:center;font-size:12px;line-height:1;
-  }
+  .play{width:38px;height:38px;flex:0 0 38px;border:1px solid var(--ink);background:var(--paper);display:grid;place-items:center;font-size:12px;line-height:1}
   .play:hover{background:var(--signal)}
   .clock{font-family:var(--mono);font-size:12px;color:var(--ink-60);font-variant-numeric:tabular-nums}
   canvas{display:block;width:100%;height:96px;cursor:crosshair}
 
-  /* ---------- status ---------- */
   .status{margin-top:18px;border:1px solid var(--ink-12);background:var(--paper-2);padding:14px;display:none}
   .status.on{display:block}
   .status-row{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px}
-  .status-row .msg{color:var(--ink)}
-  .status-row .pct{color:var(--ink-60);font-variant-numeric:tabular-nums}
+  .status-row .pct{color:var(--ink-60);font-variant-numeric:tabular-nums;white-space:nowrap}
   .bar{height:4px;background:var(--ink-12);margin-top:9px;overflow:hidden}
-  .bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .25s ease}
-  .bar.indet i{width:40%;animation:slide 1.3s ease-in-out infinite}
-  @keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+  .bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .3s ease}
+  .bar.indet i{width:38%;animation:slide 1.3s ease-in-out infinite}
+  @keyframes slide{0%{margin-left:-38%}100%{margin-left:100%}}
   .status.err{border-color:var(--red)}
   .status.err .msg{color:var(--red)}
+  .hint{font-family:var(--mono);font-size:12px;color:var(--ink-60);margin-top:9px;line-height:1.6}
+  .hint:empty{display:none}
 
-  /* ---------- transcript ---------- */
   .out{margin-top:34px;display:none}
   .out.on{display:block}
   .out-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
@@ -129,18 +89,15 @@
   .exports button{background:transparent;border:1px solid var(--ink-30);padding:6px 10px;color:var(--ink)}
   .exports button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .lines{border-top:1px solid var(--ink)}
-  .line{
-    display:grid;grid-template-columns:86px 1fr;gap:16px;
-    padding:9px 4px;border-bottom:1px solid var(--ink-12);
+  .line{display:grid;grid-template-columns:86px 1fr;gap:16px;padding:9px 4px;border-bottom:1px solid var(--ink-12);
     background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;
-    font-family:var(--mono);font-size:14.5px;line-height:1.65;color:var(--ink);
-  }
+    font-family:var(--mono);font-size:14.5px;line-height:1.65;color:var(--ink)}
   .line:hover{background:var(--paper-2)}
   .line .tc{color:var(--moss);font-size:12px;font-variant-numeric:tabular-nums;padding-top:3px}
   .line.now{background:var(--signal)}
   .line.now .tc{color:var(--ink)}
   .plain{white-space:pre-wrap;font-family:var(--mono);font-size:14.5px;line-height:1.8;border-top:1px solid var(--ink);padding-top:16px}
-  .foot{margin-top:52px;font-family:var(--mono);font-size:12px;color:var(--ink-60);max-width:62ch}
+  .foot{margin-top:52px;font-family:var(--mono);font-size:12px;color:var(--ink-60);max-width:64ch}
   .foot a{color:var(--blue)}
   .vis-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -152,22 +109,29 @@
   <header>
     <p class="eyebrow"><b>Nothing leaves this device</b> <span>Whisper runs locally · no key · no upload</span></p>
     <h1>Drop a tape.<br>Get the <em>words</em>.</h1>
-    <p class="lede">Pick an audio file and it gets transcribed right here in the browser tab. The first run downloads the speech model (about 80&nbsp;MB for the default), then it's cached for next time.</p>
+    <p class="lede">Pick an audio or video file and it gets transcribed right here in the browser tab. The first run downloads the speech model, then it's cached. Text appears as each 30-second window finishes, so you can watch it work.</p>
   </header>
 
   <hr class="rule">
 
   <div class="deck">
-    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose an audio file">
-      <div class="drop-title" id="dropTitle">Choose an audio file</div>
-      <div class="drop-sub" id="dropSub">or drag one here — mp3, wav, m4a, ogg, webm, flac</div>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose a file">
+      <div class="drop-title" id="dropTitle">Choose a file</div>
+      <div class="drop-sub" id="dropSub">or drag one here — mp3, wav, m4a, ogg, flac, mp4, mov, webm</div>
     </div>
-    <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm,.flac" class="vis-hidden">
+    <input type="file" id="file" accept="audio/*,video/*" class="vis-hidden">
 
     <div class="controls">
       <div>
         <label class="field" for="model">Model</label>
         <select id="model"></select>
+      </div>
+      <div>
+        <label class="field" for="engine">Engine</label>
+        <select id="engine">
+          <option value="wasm" selected>CPU — reliable everywhere</option>
+          <option value="webgpu">WebGPU — faster, can be flaky</option>
+        </select>
       </div>
       <div>
         <label class="field" for="lang">Language</label>
@@ -188,6 +152,7 @@
   <div class="status" id="status" role="status" aria-live="polite">
     <div class="status-row"><span class="msg" id="statusMsg">Ready</span><span class="pct" id="statusPct"></span></div>
     <div class="bar" id="bar"><i id="barFill"></i></div>
+    <div class="hint" id="hint"></div>
   </div>
 
   <section class="out" id="out">
@@ -208,15 +173,14 @@
   </section>
 
   <p class="foot">
-    Built on <a href="https://github.com/huggingface/transformers.js">Transformers.js</a> running OpenAI's Whisper models with ONNX Runtime Web.
-    Accuracy tracks model size — bump up a tier if names and jargon come out wrong. Long files take a while on CPU;
-    a browser with WebGPU (Chrome or Edge) is several times faster.
+    Built on <a href="https://github.com/huggingface/transformers.js">Transformers.js</a> running OpenAI's Whisper with ONNX Runtime Web.
+    Audio is cut into 30-second windows and transcribed one at a time, so progress is real rather than guessed.
+    On CPU, budget roughly one to three minutes of work per minute of audio with the base model — tiny is about three times faster.
   </p>
 
   <audio id="audio" class="vis-hidden"></audio>
 </div>
 
-<!-- Worker source. Kept as a non-executing script tag, then booted as a module worker. -->
 <script id="workerSrc" type="text/js-worker">
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3";
 
@@ -226,7 +190,7 @@ let pipe = null;
 let loadedKey = "";
 
 async function build(model, device, dtype) {
-  const key = model + "|" + device;
+  const key = model + "|" + device + "|" + JSON.stringify(dtype);
   if (pipe && loadedKey === key) return pipe;
   if (pipe) { try { await pipe.dispose(); } catch (e) {} pipe = null; loadedKey = ""; }
   pipe = await pipeline("automatic-speech-recognition", model, {
@@ -238,36 +202,69 @@ async function build(model, device, dtype) {
   return pipe;
 }
 
+const SR = 16000;
+const WIN = 30;   // seconds per window
+const HOP = 27;   // 3s overlap so words on the seam aren't lost
+
 self.onmessage = async (e) => {
-  const { audio, model, dtype, dtypeCpu, language, duration } = e.data;
+  const job = e.data;
   try {
-    let p;
+    let device = job.device;
+    let dtype = device === "webgpu" ? job.dtypeGpu : job.dtypeCpu;
+
     self.postMessage({ type: "status", data: "Loading model" });
     try {
-      p = await build(model, "webgpu", dtype);
+      await build(job.model, device, dtype);
     } catch (err) {
-      self.postMessage({ type: "status", data: "WebGPU unavailable — using CPU" });
-      p = await build(model, "wasm", dtypeCpu);
+      if (device === "webgpu") {
+        self.postMessage({ type: "status", data: "WebGPU refused the model — using CPU" });
+        device = "wasm";
+        await build(job.model, device, job.dtypeCpu);
+      } else {
+        throw err;
+      }
     }
 
-    const hop = 20;
-    const total = Math.max(1, Math.ceil((duration || 0) / hop));
-    let done = 0;
-    self.postMessage({ type: "status", data: "Transcribing" });
+    const audio = job.audio;
+    const duration = audio.length / SR;
+    const total = Math.max(1, Math.ceil(Math.max(0.001, duration - (WIN - HOP)) / HOP));
 
-    const opts = {
-      chunk_length_s: 30,
-      stride_length_s: 5,
-      return_timestamps: true,
-      chunk_callback: () => {
-        done++;
-        self.postMessage({ type: "chunk", data: Math.min(0.99, done / total) });
+    self.postMessage({ type: "status", data: "Transcribing", total });
+
+    for (let i = 0; i < total; i++) {
+      const offset = i * HOP;
+      const from = Math.floor(offset * SR);
+      const to = Math.min(audio.length, Math.floor((offset + WIN) * SR));
+      if (to - from < SR * 0.25) break;
+
+      const slice = audio.slice(from, to);
+      const opts = { return_timestamps: true };
+      if (job.language) { opts.language = job.language; opts.task = "transcribe"; }
+
+      const t0 = Date.now();
+      const result = await pipe(slice, opts);
+      const took = (Date.now() - t0) / 1000;
+
+      let chunks = (result && result.chunks) || [];
+      if (!chunks.length && result && result.text) {
+        chunks = [{ timestamp: [0, null], text: result.text }];
       }
-    };
-    if (language) { opts.language = language; opts.task = "transcribe"; }
 
-    const result = await p(audio, opts);
-    self.postMessage({ type: "done", data: result });
+      const windowLen = (to - from) / SR;
+      const segments = chunks.map((c) => {
+        const ts = c.timestamp || [];
+        const s = typeof ts[0] === "number" ? ts[0] : 0;
+        const en = typeof ts[1] === "number" ? ts[1] : Math.min(windowLen, s + 5);
+        return { start: offset + s, end: offset + Math.max(en, s + 0.2), text: String(c.text || "").trim() };
+      }).filter((s) => s.text);
+
+      self.postMessage({
+        type: "window",
+        data: { segments, index: i, total, progress: (i + 1) / total, took, device }
+      });
+    }
+
+    self.postMessage({ type: "done" });
   } catch (err) {
     self.postMessage({ type: "error", data: String((err && err.message) || err) });
   }
@@ -279,11 +276,11 @@ self.onmessage = async (e) => {
   "use strict";
 
   const MODELS = [
-    { id: "Xenova/whisper-base.en",  label: "Base · English (~80 MB) — default",   multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
-    { id: "Xenova/whisper-tiny.en",  label: "Tiny · English (~40 MB) — fastest",   multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
-    { id: "Xenova/whisper-small.en", label: "Small · English (~250 MB) — better",  multi: false, dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
-    { id: "Xenova/whisper-base",     label: "Base · multilingual (~80 MB)",        multi: true,  dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" },
-    { id: "Xenova/whisper-small",    label: "Small · multilingual (~250 MB)",      multi: true,  dtype: { encoder_model: "fp32", decoder_model_merged: "q8" }, cpu: "q8" }
+    { id: "Xenova/whisper-tiny.en",  label: "Tiny · English (~40 MB) — fastest",  multi: false, gpu: { encoder_model: "fp32", decoder_model_merged: "fp32" }, cpu: "q8" },
+    { id: "Xenova/whisper-base.en",  label: "Base · English (~80 MB) — balanced", multi: false, gpu: { encoder_model: "fp32", decoder_model_merged: "fp32" }, cpu: "q8" },
+    { id: "Xenova/whisper-small.en", label: "Small · English (~250 MB) — best",   multi: false, gpu: { encoder_model: "fp32", decoder_model_merged: "fp32" }, cpu: "q8" },
+    { id: "Xenova/whisper-base",     label: "Base · multilingual (~80 MB)",       multi: true,  gpu: { encoder_model: "fp32", decoder_model_merged: "fp32" }, cpu: "q8" },
+    { id: "Xenova/whisper-small",    label: "Small · multilingual (~250 MB)",     multi: true,  gpu: { encoder_model: "fp32", decoder_model_merged: "fp32" }, cpu: "q8" }
   ];
 
   const LANGS = ["english","spanish","french","german","italian","portuguese","dutch","russian","polish","turkish","arabic","hindi","japanese","korean","chinese","vietnamese","indonesian","swedish","danish","norwegian","finnish","czech","greek","hebrew","romanian","ukrainian","thai","tagalog"];
@@ -291,35 +288,29 @@ self.onmessage = async (e) => {
   const $ = (id) => document.getElementById(id);
   const els = {
     drop: $("drop"), dropTitle: $("dropTitle"), dropSub: $("dropSub"), file: $("file"),
-    model: $("model"), lang: $("lang"), go: $("go"),
+    model: $("model"), engine: $("engine"), lang: $("lang"), go: $("go"),
     tape: $("tape"), play: $("play"), clock: $("clock"), wave: $("wave"),
-    status: $("status"), statusMsg: $("statusMsg"), statusPct: $("statusPct"), bar: $("bar"), barFill: $("barFill"),
+    status: $("status"), statusMsg: $("statusMsg"), statusPct: $("statusPct"),
+    bar: $("bar"), barFill: $("barFill"), hint: $("hint"),
     out: $("out"), lines: $("lines"), plainOut: $("plainOut"), copy: $("copy"), audio: $("audio")
   };
 
-  let worker = null;
-  let peaks = null;         // Float32Array of drawing peaks
-  let pcm = null;           // 16 kHz mono samples for the model
-  let duration = 0;
-  let segments = [];
-  let objectUrl = null;
-  let view = "timed";
-  let running = false;
+  let worker = null, peaks = null, pcm = null, duration = 0;
+  let segments = [], objectUrl = null, view = "timed", running = false;
+  let startedAt = 0, watchdog = null, timer = null;
 
-  /* ---------- setup selects ---------- */
   MODELS.forEach((m, i) => els.model.add(new Option(m.label, String(i))));
+  els.model.value = "1";
   els.lang.add(new Option("Auto-detect", ""));
   LANGS.forEach((l) => els.lang.add(new Option(l[0].toUpperCase() + l.slice(1), l)));
   const syncLang = () => {
     const m = MODELS[+els.model.value];
     els.lang.disabled = !m.multi;
-    els.lang.title = m.multi ? "" : "English-only model";
     if (!m.multi) els.lang.value = "";
   };
   els.model.addEventListener("change", syncLang);
   syncLang();
 
-  /* ---------- helpers ---------- */
   const pad = (n, w = 2) => String(Math.floor(n)).padStart(w, "0");
   function clock(t) {
     t = Math.max(0, t || 0);
@@ -328,8 +319,8 @@ self.onmessage = async (e) => {
   }
   function stamp(t, comma) {
     t = Math.max(0, t || 0);
-    const ms = Math.round((t % 1) * 1000);
-    return pad(t / 3600) + ":" + pad(Math.floor(t / 60) % 60) + ":" + pad(t % 60) + (comma ? "," : ".") + pad(ms, 3);
+    return pad(t / 3600) + ":" + pad(Math.floor(t / 60) % 60) + ":" + pad(t % 60) +
+      (comma ? "," : ".") + pad(Math.round((t % 1) * 1000), 3);
   }
   function setStatus(msg, pct, isErr) {
     els.status.classList.add("on");
@@ -338,13 +329,15 @@ self.onmessage = async (e) => {
     if (pct == null) {
       els.bar.classList.add("indet");
       els.barFill.style.width = "";
-      els.statusPct.textContent = "";
+      els.statusPct.textContent = running ? elapsed() : "";
     } else {
       els.bar.classList.remove("indet");
       els.barFill.style.width = Math.round(pct * 100) + "%";
-      els.statusPct.textContent = Math.round(pct * 100) + "%";
+      els.statusPct.textContent = Math.round(pct * 100) + "%" + (running ? " · " + elapsed() : "");
     }
   }
+  const elapsed = () => clock((Date.now() - startedAt) / 1000);
+  const setHint = (t) => { els.hint.textContent = t || ""; };
 
   /* ---------- file intake ---------- */
   els.drop.addEventListener("click", () => els.file.click());
@@ -360,14 +353,13 @@ self.onmessage = async (e) => {
     const f = e.dataTransfer.files && e.dataTransfer.files[0];
     if (f) load(f);
   });
-  els.file.addEventListener("change", () => {
-    if (els.file.files[0]) load(els.file.files[0]);
-  });
+  els.file.addEventListener("change", () => { if (els.file.files[0]) load(els.file.files[0]); });
 
   async function load(file) {
     els.go.disabled = true;
     els.out.classList.remove("on");
     segments = [];
+    setHint("");
     setStatus("Reading " + file.name, null);
     try {
       const buf = await file.arrayBuffer();
@@ -383,7 +375,6 @@ self.onmessage = async (e) => {
         ctx.close();
       }
 
-      // Mix to mono
       let mono;
       if (audioBuffer.numberOfChannels > 1) {
         const a = audioBuffer.getChannelData(0), b = audioBuffer.getChannelData(1);
@@ -393,12 +384,11 @@ self.onmessage = async (e) => {
         mono = audioBuffer.getChannelData(0).slice();
       }
 
-      // Resample to 16 kHz if the browser ignored the sampleRate hint
       if (Math.abs(audioBuffer.sampleRate - 16000) > 1) {
         const off = new OfflineAudioContext(1, Math.ceil(mono.length * 16000 / audioBuffer.sampleRate), 16000);
-        const src = off.createBufferSource();
         const tmp = off.createBuffer(1, mono.length, audioBuffer.sampleRate);
         tmp.copyToChannel(mono, 0);
+        const src = off.createBufferSource();
         src.buffer = tmp;
         src.connect(off.destination);
         src.start();
@@ -413,7 +403,6 @@ self.onmessage = async (e) => {
       els.audio.src = objectUrl;
 
       els.dropTitle.textContent = file.name;
-      els.dropTitle.className = "filename drop-title";
       els.dropSub.textContent = clock(duration) + " · " + (file.size / 1048576).toFixed(1) + " MB · click to swap";
       els.tape.classList.add("on");
       buildPeaks();
@@ -421,8 +410,11 @@ self.onmessage = async (e) => {
       els.clock.textContent = "0:00 / " + clock(duration);
       els.go.disabled = false;
       setStatus("Ready — " + clock(duration) + " of audio", 1);
+      setHint("First run downloads the model before any text appears. Windows to transcribe: " +
+        Math.max(1, Math.ceil(Math.max(0.001, duration - 3) / 27)) + ".");
     } catch (err) {
-      setStatus("Couldn't decode that file. Try MP3, WAV, M4A, OGG or FLAC.", 1, true);
+      setStatus("Couldn't decode that file — the browser doesn't have a codec for it.", 1, true);
+      setHint("Try exporting it as MP3 or WAV first. Some MP4/MOV files use audio codecs Firefox can't open; Chrome usually can.");
     }
   }
 
@@ -431,13 +423,14 @@ self.onmessage = async (e) => {
     const n = 900;
     peaks = new Float32Array(n);
     const step = Math.max(1, Math.floor(pcm.length / n));
+    let top = 0.01;
     for (let i = 0; i < n; i++) {
       let max = 0;
       const start = i * step, end = Math.min(pcm.length, start + step);
       for (let j = start; j < end; j += 4) { const v = Math.abs(pcm[j]); if (v > max) max = v; }
       peaks[i] = max;
+      if (max > top) top = max;
     }
-    const top = Math.max(0.01, Math.max.apply(null, Array.from(peaks)));
     for (let i = 0; i < n; i++) peaks[i] = Math.min(1, peaks[i] / top);
   }
 
@@ -449,7 +442,6 @@ self.onmessage = async (e) => {
     const g = c.getContext("2d");
     g.scale(dpr, dpr);
     g.clearRect(0, 0, w, h);
-
     const barW = 2, gap = 1, count = Math.floor(w / (barW + gap));
     const mid = h / 2, playX = (playhead / (duration || 1)) * w;
     for (let i = 0; i < count; i++) {
@@ -459,25 +451,20 @@ self.onmessage = async (e) => {
       g.fillStyle = x <= playX ? "#131A16" : "rgba(111,127,104,.55)";
       g.fillRect(x, mid - bh / 2, barW, bh);
     }
-    if (playhead > 0) {
-      g.fillStyle = "#2743E3";
-      g.fillRect(playX, 0, 1.5, h);
-    }
+    if (playhead > 0) { g.fillStyle = "#2743E3"; g.fillRect(playX, 0, 1.5, h); }
   }
   window.addEventListener("resize", () => drawWave(els.audio.currentTime));
-
   els.wave.addEventListener("click", (e) => {
     const r = els.wave.getBoundingClientRect();
     els.audio.currentTime = ((e.clientX - r.left) / r.width) * duration;
   });
 
   /* ---------- playback ---------- */
-  els.play.addEventListener("click", () => {
-    if (els.audio.paused) els.audio.play(); else els.audio.pause();
-  });
+  els.play.addEventListener("click", () => { els.audio.paused ? els.audio.play() : els.audio.pause(); });
   els.audio.addEventListener("play", () => { els.play.textContent = "❚❚"; tick(); });
   els.audio.addEventListener("pause", () => { els.play.textContent = "▶"; });
   els.audio.addEventListener("ended", () => { els.play.textContent = "▶"; });
+  els.audio.addEventListener("seeked", () => { if (els.audio.paused) tick(); });
 
   function tick() {
     const t = els.audio.currentTime;
@@ -490,109 +477,158 @@ self.onmessage = async (e) => {
     Array.prototype.forEach.call(els.lines.children, (el, i) => el.classList.toggle("now", i === active));
     if (!els.audio.paused) requestAnimationFrame(tick);
   }
-  els.audio.addEventListener("seeked", () => { if (els.audio.paused) tick(); });
 
-  /* ---------- transcription ---------- */
+  /* ---------- worker ---------- */
   function boot() {
     if (worker) return worker;
     const src = document.getElementById("workerSrc").textContent;
     const url = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
     worker = new Worker(url, { type: "module" });
-    worker.onmessage = (e) => {
-      const { type, data } = e.data;
-      if (type === "progress") {
-        if (data.status === "progress" && data.file && /\.onnx/.test(data.file)) {
-          setStatus("Downloading model · " + data.file.split("/").pop(), (data.progress || 0) / 100);
-        } else if (data.status === "initiate") {
-          setStatus("Fetching " + (data.file || "model files"), null);
-        }
-      } else if (type === "status") {
-        setStatus(data + "…", null);
-      } else if (type === "chunk") {
-        setStatus("Transcribing", data);
-      } else if (type === "done") {
-        finish(data);
-      } else if (type === "error") {
-        running = false;
-        els.go.disabled = false;
-        els.go.textContent = "Transcribe";
-        setStatus(data, 1, true);
-      }
-    };
-    worker.onerror = () => {
-      running = false;
-      els.go.disabled = false;
-      setStatus("The worker failed to start. Serve this page over http(s), not from a file:// path.", 1, true);
+    worker.onmessage = onWorker;
+    worker.onerror = (e) => {
+      console.error("worker error", e);
+      fail("The worker couldn't start. Serve the page over http(s), not file://.");
     };
     return worker;
   }
 
+  function onWorker(e) {
+    const { type, data, total } = e.data;
+    bumpWatchdog();
+
+    if (type === "progress") {
+      if (data.status === "progress" && data.file && data.file.indexOf(".onnx") > -1) {
+        setStatus("Downloading model · " + data.file.split("/").pop(), (data.progress || 0) / 100);
+        setHint("This happens once. The browser caches it for next time.");
+      } else if (data.status === "initiate") {
+        setStatus("Fetching model files", null);
+      }
+    } else if (type === "status") {
+      setStatus(data + "…", null);
+      if (total) setHint(total + " windows to go.");
+    } else if (type === "window") {
+      absorb(data.segments);
+      render(true);
+      setStatus("Transcribing — window " + (data.index + 1) + " of " + data.total, data.progress);
+      const perWin = data.took;
+      const left = Math.round(perWin * (data.total - data.index - 1));
+      setHint(perWin.toFixed(1) + "s per 30s window on " + (data.device === "webgpu" ? "WebGPU" : "CPU") +
+        (left > 0 ? " · about " + clock(left) + " remaining" : ""));
+    } else if (type === "done") {
+      stop(false);
+      render(false);
+      const words = segments.reduce((n, s) => n + s.text.split(/\s+/).filter(Boolean).length, 0);
+      setStatus("Done — " + segments.length + " segments, " + words + " words", 1);
+      setHint("Took " + elapsed() + ".");
+    } else if (type === "error") {
+      console.error(data);
+      fail(data);
+    }
+  }
+
+  function fail(msg) {
+    stop(false);
+    setStatus(msg, 1, true);
+    setHint("If this keeps happening, switch Engine to CPU and Model to Tiny, then reload and retry.");
+  }
+
+  /* ---------- run ---------- */
   els.go.addEventListener("click", () => {
-    if (running || !pcm) return;
+    if (running) { stop(true); return; }
+    if (!pcm) return;
     running = true;
-    els.go.disabled = true;
-    els.go.textContent = "Working…";
+    startedAt = Date.now();
+    segments = [];
+    els.lines.innerHTML = "";
     els.out.classList.remove("on");
+    els.go.textContent = "Stop";
+    els.go.classList.add("stop");
     setStatus("Starting", null);
+    setHint("");
+    timer = setInterval(() => {
+      if (running && els.statusPct.textContent) {
+        els.statusPct.textContent = els.statusPct.textContent.replace(/·.*$/, "· " + elapsed());
+      }
+    }, 1000);
+    bumpWatchdog();
+
     const m = MODELS[+els.model.value];
     boot().postMessage({
       audio: pcm,
       model: m.id,
-      dtype: m.dtype,
+      device: els.engine.value,
+      dtypeGpu: m.gpu,
       dtypeCpu: m.cpu,
-      language: m.multi ? (els.lang.value || null) : null,
-      duration
+      language: m.multi ? (els.lang.value || null) : null
     });
   });
 
-  function finish(result) {
+  function stop(userAsked) {
     running = false;
-    els.go.disabled = false;
+    clearInterval(timer);
+    clearTimeout(watchdog);
     els.go.textContent = "Transcribe";
-
-    const chunks = (result && result.chunks) || [];
-    segments = chunks.map((c, i) => {
-      const start = (c.timestamp && c.timestamp[0]) || 0;
-      let end = c.timestamp && c.timestamp[1];
-      if (end == null) {
-        const next = chunks[i + 1];
-        end = (next && next.timestamp && next.timestamp[0]) || duration;
-      }
-      return { start, end, text: (c.text || "").trim() };
-    }).filter((s) => s.text);
-
-    if (!segments.length && result && result.text) {
-      segments = [{ start: 0, end: duration, text: result.text.trim() }];
+    els.go.classList.remove("stop");
+    els.go.disabled = !pcm;
+    if (userAsked) {
+      if (worker) { worker.terminate(); worker = null; }
+      setStatus("Stopped. " + segments.length + " segments kept.", 1);
+      setHint("");
+      render(false);
     }
-
-    render();
-    setStatus("Done — " + segments.length + " segments, " +
-      segments.reduce((n, s) => n + s.text.split(/\s+/).length, 0) + " words", 1);
   }
 
-  function render() {
+  // If a single window takes longer than 3 minutes, something is wedged — say so.
+  function bumpWatchdog() {
+    clearTimeout(watchdog);
+    if (!running) return;
+    watchdog = setTimeout(() => {
+      if (!running) return;
+      setHint("No progress for three minutes — that usually means the engine is stuck. Press Stop, set Engine to CPU and Model to Tiny, reload the page, and try again. Check the browser console (F12) for a red error.");
+    }, 180000);
+  }
+
+  /* ---------- merge + render ---------- */
+  function absorb(incoming) {
+    incoming.forEach((s) => {
+      const last = segments[segments.length - 1];
+      if (last) {
+        if (s.start < last.end - 0.4) return;                 // inside the overlap already covered
+        if (s.text === last.text && s.start - last.end < 2) return;
+      }
+      segments.push(s);
+    });
+  }
+
+  function render(live) {
     els.lines.innerHTML = "";
     segments.forEach((s) => {
       const b = document.createElement("button");
       b.className = "line";
-      b.innerHTML = '<span class="tc"></span><span class="tx"></span>';
-      b.querySelector(".tc").textContent = clock(s.start);
-      b.querySelector(".tx").textContent = s.text;
+      const tc = document.createElement("span");
+      tc.className = "tc";
+      tc.textContent = clock(s.start);
+      const tx = document.createElement("span");
+      tx.textContent = s.text;
+      b.appendChild(tc); b.appendChild(tx);
       b.addEventListener("click", () => { els.audio.currentTime = s.start; els.audio.play(); });
       els.lines.appendChild(b);
     });
     els.plainOut.textContent = paragraphs();
     els.out.classList.add("on");
     setView(view);
+    if (live && view === "timed") {
+      const last = els.lines.lastElementChild;
+      if (last) last.scrollIntoView({ block: "nearest" });
+    }
   }
 
   function paragraphs() {
-    let out = "", gap = 0;
+    let out = "";
     segments.forEach((s, i) => {
       const prev = segments[i - 1];
-      if (prev && s.start - prev.end > 1.6) gap = 1;
-      out += (i === 0 ? "" : gap ? "\n\n" : " ") + s.text;
-      gap = 0;
+      const brk = prev && s.start - prev.end > 1.6;
+      out += (i === 0 ? "" : brk ? "\n\n" : " ") + s.text;
     });
     return out;
   }
@@ -604,14 +640,11 @@ self.onmessage = async (e) => {
   }
 
   /* ---------- exports ---------- */
-  function asSRT() {
-    return segments.map((s, i) =>
-      (i + 1) + "\n" + stamp(s.start, true) + " --> " + stamp(s.end, true) + "\n" + s.text + "\n").join("\n");
-  }
-  function asVTT() {
-    return "WEBVTT\n\n" + segments.map((s) =>
-      stamp(s.start, false) + " --> " + stamp(s.end, false) + "\n" + s.text + "\n").join("\n");
-  }
+  const asSRT = () => segments.map((s, i) =>
+    (i + 1) + "\n" + stamp(s.start, true) + " --> " + stamp(s.end, true) + "\n" + s.text + "\n").join("\n");
+  const asVTT = () => "WEBVTT\n\n" + segments.map((s) =>
+    stamp(s.start, false) + " --> " + stamp(s.end, false) + "\n" + s.text + "\n").join("\n");
+
   function download(name, text) {
     const a = document.createElement("a");
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
@@ -638,11 +671,10 @@ self.onmessage = async (e) => {
     try {
       await navigator.clipboard.writeText(text);
       els.copy.textContent = "Copied";
-      setTimeout(() => (els.copy.textContent = "Copy"), 1400);
     } catch (e) {
       els.copy.textContent = "Copy blocked";
-      setTimeout(() => (els.copy.textContent = "Copy"), 1400);
     }
+    setTimeout(() => (els.copy.textContent = "Copy"), 1400);
   });
 })();
 </script>
